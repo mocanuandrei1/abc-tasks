@@ -2,7 +2,9 @@
 import { diagram } from "@/utils/get-diagram";
 import { MermaidDiagram } from "@lightenna/react-mermaid-diagram";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-
+import { useRouter } from "next/navigation";
+import mermaid from "mermaid";
+import { useEffect } from "react";
 // Definim user-ul curent
 const currentUser = "alex"; // Poți schimba rolul în funcție de utilizator
 
@@ -39,11 +41,23 @@ const getStyledDiagram = (diagram) => {
 
   return styledDiagram;
 };
-
 export const Diagram = () => {
-  // Stilizăm diagrama în funcție de permisiunile utilizatorului
-  const styledDiagram = getStyledDiagram(diagram);
+  const router = useRouter();
 
+  useEffect(() => {
+    // Definim funcția callback globală
+    window.callFunction = (id) => {
+      router.push(`/dashboard/${id}`); // Redirecționează utilizatorul către /dashboard/[id]
+    };
+
+    const config = {
+      startOnLoad: true,
+      flowchart: { useMaxWidth: true, htmlLabels: true, curve: "cardinal" },
+      securityLevel: "loose", // Permit interacțiuni JavaScript
+    };
+    mermaid.initialize(config); // Inițializăm mermaid cu configurarea dorită
+  }, [router]);
+  const styledDiagram = getStyledDiagram(diagram);
   return (
     <TransformWrapper limitToBounds={false} centerOnInit={true}>
       <TransformComponent>
