@@ -56,7 +56,7 @@ const getStyledDiagram = (diagram) => {
   return styledDiagram + "\n" + clickEvents;
 };
 
-export const Diagram = () => {
+export const Diagram = ({ diagram }) => {
   const router = useRouter();
 
   useEffect(() => {
