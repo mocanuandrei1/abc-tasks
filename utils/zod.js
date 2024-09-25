@@ -34,3 +34,9 @@ export const multipleNodesSchema = z.object({
 export const mermaidSchema = z.object({
   diagram: z.string().min(1, "Diagrama este obligatorie"), // Non-empty string
 });
+
+export const userSettingsSchema = z.object({
+  name: z.string().min(1, "Numele este obligatoriu"), // Non-empty string
+  username: z.string().min(1, "Username-ul este obligatoriu"), // Non-empty string
+  password: z.string().min(8, "Parola trebuie sa aiba minim 8 caractere"), // Minimum 8 characters for password
+});

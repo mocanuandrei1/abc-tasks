@@ -5,26 +5,22 @@ import { useRouter } from "next/navigation";
 import mermaid from "mermaid";
 import { useEffect } from "react";
 
-// Definim user-ul curent
-const currentUser = "alex"; // Poți schimba rolul în funcție de utilizator
-
-// Definim permisiunile fiecărui utilizator
-const userPermissions = {
-  alex: { accessibleNodes: [108, 31, 18, 21, 6, 2, 4, 3] },
-  // Poți adăuga alți utilizatori aici
-};
-
 // Funcție care verifică dacă utilizatorul are acces la un anumit nod
-const hasAccess = (id) => {
-  const userPermission = userPermissions[currentUser];
-  return userPermission?.accessibleNodes.includes(id);
+const hasAccess = (user, id) => {
+  if (user.isAdmin) {
+    // Admin-ul are acces la toate nodurile
+    return true;
+  }
+
+  // Verificăm dacă utilizatorul are acces la nodul specificat, accesând id-ul din obiectele din array
+  return user.nodes.some((node) => node.id === id);
 };
 
 // Funcție care stilizează nodurile accesibile și inaccesibile în diagramă și adaugă apeluri click la final
-const getStyledDiagram = (diagram) => {
+const getStyledDiagram = (diagram, user) => {
   let styledDiagram = diagram.replace(/(\d+)\[.*?\]/g, (match, id) => {
     const elementId = parseInt(id, 10);
-    if (hasAccess(elementId)) {
+    if (hasAccess(user, elementId)) {
       // Stilizăm nodurile accesibile
       return `${match}:::accessible`;
     } else {
@@ -38,7 +34,7 @@ const getStyledDiagram = (diagram) => {
     .match(/(\d+)\[.*?\]/g)
     .map((match) => {
       const elementId = parseInt(match.match(/\d+/)[0], 10);
-      if (hasAccess(elementId)) {
+      if (hasAccess(user, elementId)) {
         return `click ${elementId} callFunction`;
       }
       return null;
@@ -56,8 +52,9 @@ const getStyledDiagram = (diagram) => {
   return styledDiagram + "\n" + clickEvents;
 };
 
-export const Diagram = ({ diagram }) => {
+export const Diagram = ({ diagram, session }) => {
   const router = useRouter();
+  const user = session?.user;
 
   useEffect(() => {
     // Definim funcția callback globală
@@ -74,7 +71,7 @@ export const Diagram = ({ diagram }) => {
   }, [router]);
 
   // Aplicăm stilizarea diagrama
-  const styledDiagram = getStyledDiagram(diagram);
+  const styledDiagram = getStyledDiagram(diagram, user);
 
   return (
     <TransformWrapper limitToBounds={false} centerOnInit={true}>

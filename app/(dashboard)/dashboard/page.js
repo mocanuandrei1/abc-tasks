@@ -15,5 +15,5 @@ export default async function Page() {
     return <div>Nu esti authentificat</div>;
   }
 
-  return <Diagram diagram={mermaidDiagram.diagram} />;
+  return <Diagram session={session} diagram={mermaidDiagram.diagram} />;
 }

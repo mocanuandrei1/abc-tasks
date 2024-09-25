@@ -26,6 +26,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             name: true,
             password: true,
             isAdmin: true,
+            nodes: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
           },
         });
 
@@ -40,6 +46,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           name: user.name,
           id: user.id,
           isAdmin: user.isAdmin,
+          nodes: user.nodes,
         };
 
         return userData;
@@ -56,6 +63,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.username = token.username;
         session.user.name = token.name;
         session.user.isAdmin = token.isAdmin;
+        session.user.nodes = token.nodes;
       }
 
       return session;
@@ -66,6 +74,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.username = user.username;
         token.name = user.name;
         token.isAdmin = user.isAdmin;
+        token.nodes = user.nodes;
       }
       return token;
     },

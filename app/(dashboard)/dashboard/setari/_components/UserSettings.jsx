@@ -20,7 +20,7 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { userSchema } from "@/utils/zod";
+import { userSettingsSchema } from "@/utils/zod";
 import { useAction } from "next-safe-action/hooks";
 import { DisplayServerActionResponse } from "@/components/custom ui/display-server-actions-response";
 import { userSettings } from "@/utils/actions/user/user-settings";
@@ -28,7 +28,7 @@ import { toast } from "@/hooks/use-toast";
 
 const UserSettings = ({ user }) => {
   const { reset, ...form } = useForm({
-    resolver: zodResolver(userSchema),
+    resolver: zodResolver(userSettingsSchema),
     defaultValues: {
       name: user.name,
       username: user.username,
