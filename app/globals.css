@@ -95,3 +95,13 @@ h6 {
   width: 100% !important;
   height: 100% !important;
 }
+
+.cluster rect {
+  fill: white !important;
+  stroke: black !important;
+  stroke-width: 0px !important;
+}
+
+.edgeLabel p {
+  background-color: white !important;
+}
