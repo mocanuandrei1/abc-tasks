@@ -38,6 +38,7 @@ import { toast } from "@/hooks/use-toast";
 import { PlusCircle } from "lucide-react";
 
 import { Checkbox } from "@/components/ui/checkbox";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const AddUser = ({ nodes }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -83,7 +84,7 @@ const AddUser = ({ nodes }) => {
             Adauga utilizator
           </span>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[1500px]">
           <DialogHeader>
             <DialogTitle>Creeaza un utilizator</DialogTitle>
             <DialogDescription>
@@ -102,65 +103,85 @@ const AddUser = ({ nodes }) => {
             }}
             className="space-y-8"
           >
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nume</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Popescu Ionel" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {result.validationErrors?.name && (
-              <p>{result.validationErrors?.name._errors[0]}</p>
-            )}
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <Input placeholder="popescuionel" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {result.validationErrors?.username && (
-              <p>{result.validationErrors?.username._errors[0]}</p>
-            )}
-            <FormField
-              control={form.control}
-              name="isAdmin"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Este admin?</FormLabel>
-                  <Select
-                    onValueChange={(value) => field.onChange(value === "true")}
-                    value={String(field.value)}
-                    name={field.name}
-                  >
+            <div className="grid grid-cols-4 gap-5">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nume</FormLabel>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue ref={field.ref} placeholder="Nu" />
-                      </SelectTrigger>
+                      <Input placeholder="Popescu Ionel" {...field} />
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="true">Da</SelectItem>
-                      <SelectItem value="false">Nu</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormItem>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {result.validationErrors?.name && (
+                <p>{result.validationErrors?.name._errors[0]}</p>
               )}
-            />
-            {result.validationErrors?.isAdmin && (
-              <p>{result.validationErrors?.isAdmin._errors[0]}</p>
-            )}
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input placeholder="popescuionel" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {result.validationErrors?.username && (
+                <p>{result.validationErrors?.username._errors[0]}</p>
+              )}
+              <FormField
+                control={form.control}
+                name="isAdmin"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Este admin?</FormLabel>
+                    <Select
+                      onValueChange={(value) =>
+                        field.onChange(value === "true")
+                      }
+                      value={String(field.value)}
+                      name={field.name}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue ref={field.ref} placeholder="Nu" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="true">Da</SelectItem>
+                        <SelectItem value="false">Nu</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+              {result.validationErrors?.isAdmin && (
+                <p>{result.validationErrors?.isAdmin._errors[0]}</p>
+              )}
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Parola</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="tarzan" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {result.validationErrors?.password && (
+                <p>{result.validationErrors?.password._errors[0]}</p>
+              )}
+            </div>
 
             <FormField
               control={form.control}
@@ -170,66 +191,55 @@ const AddUser = ({ nodes }) => {
                   <div className="mb-4">
                     <FormLabel className="text-base">Select Nodes</FormLabel>
                   </div>
-                  {nodes.map((node, idx) => (
-                    <FormField
-                      key={node.id}
-                      control={form.control}
-                      name="nodeIds"
-                      render={({ field }) => {
-                        // Ensure field.value is initialized as an array
-                        const selectedNodes = field.value || [];
 
-                        return (
-                          <FormItem
-                            key={node.id}
-                            className="flex flex-row items-start space-x-3 space-y-0"
-                          >
-                            <FormControl>
-                              <Checkbox
-                                checked={selectedNodes.includes(node.id)}
-                                onCheckedChange={(checked) => {
-                                  return checked
-                                    ? field.onChange([
-                                        ...selectedNodes,
-                                        node.id,
-                                      ])
-                                    : field.onChange(
-                                        selectedNodes.filter(
-                                          (nodeId) => nodeId !== node.id
-                                        )
-                                      );
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              {node.name}
-                            </FormLabel>
-                          </FormItem>
-                        );
-                      }}
-                    />
-                  ))}
+                  <ScrollArea className="h-[500px] w-[1400px] rounded-md border p-4">
+                    <div className="grid grid-cols-6 gap-3">
+                      {nodes.map((node) => (
+                        <FormField
+                          key={node.id}
+                          control={form.control}
+                          name="nodeIds"
+                          render={({ field }) => {
+                            // Ensure field.value is initialized as an array
+                            const selectedNodes = field.value || [];
+
+                            return (
+                              <FormItem
+                                key={node.id}
+                                className="flex flex-row items-start space-x-3 space-y-0"
+                              >
+                                <FormControl>
+                                  <Checkbox
+                                    checked={selectedNodes.includes(node.id)}
+                                    onCheckedChange={(checked) => {
+                                      return checked
+                                        ? field.onChange([
+                                            ...selectedNodes,
+                                            node.id,
+                                          ])
+                                        : field.onChange(
+                                            selectedNodes.filter(
+                                              (nodeId) => nodeId !== node.id
+                                            )
+                                          );
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormLabel className="font-normal">
+                                  {node.name}
+                                </FormLabel>
+                              </FormItem>
+                            );
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </ScrollArea>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Parola</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="tarzan" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {result.validationErrors?.password && (
-              <p>{result.validationErrors?.password._errors[0]}</p>
-            )}
             {!result.validationErrors && (
               <DisplayServerActionResponse result={result} />
             )}

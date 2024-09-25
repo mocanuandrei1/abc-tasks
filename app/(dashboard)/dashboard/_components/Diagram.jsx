@@ -1,5 +1,4 @@
 "use client";
-import { diagram } from "@/utils/get-diagram";
 import { MermaidDiagram } from "@lightenna/react-mermaid-diagram";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
@@ -40,14 +39,14 @@ const getStyledDiagram = (diagram) => {
   return styledDiagram;
 };
 
-export const Diagram = () => {
+export const Diagram = ({ diagram }) => {
   // Stilizăm diagrama în funcție de permisiunile utilizatorului
   const styledDiagram = getStyledDiagram(diagram);
 
   return (
     <TransformWrapper limitToBounds={false} centerOnInit={true}>
       <TransformComponent>
-        <div className="w-full h-full mt-10">
+        <div className="w-screen h-[calc(100vh_-_64px)] mt-10">
           <MermaidDiagram>{styledDiagram}</MermaidDiagram>
         </div>
       </TransformComponent>

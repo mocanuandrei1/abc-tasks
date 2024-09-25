@@ -1,9 +1,9 @@
 "use server";
 
-import { multipleNodesSchema } from "@/utils/zod";
-
+import { extractNodes } from "@/utils/functions/nodes/extract-nodes";
 import prisma from "@/utils/prisma";
 import { authActionAdmin } from "@/utils/safe-action";
+import { mermaidSchema } from "@/utils/zod";
 import { revalidateTag } from "next/cache";
 
 export const createNodes = authActionAdmin
@@ -14,15 +14,32 @@ export const createNodes = authActionAdmin
     return next();
   })
   .metadata({ actionName: "createNodes" })
-  .schema(multipleNodesSchema)
+  .schema(mermaidSchema)
   .action(
     async ({
-      parsedInput: { nodes },
+      parsedInput: { diagram },
       ctx: { userId, isAdmin: isUserAdmin },
     }) => {
       if (!isUserAdmin) {
         throw new ActionError("Nu poti adauga noduri.");
       }
+
+      if (!diagram) {
+        throw new ActionError("Trebuie sa adaugi un diagrama.");
+      }
+
+      // Delete the existing Mermaid diagram.
+      await prisma.mermaidDiagram.deleteMany();
+
+      // Create the new Mermaid diagram.
+      await prisma.mermaidDiagram.create({
+        data: {
+          id: 1,
+          diagram,
+        },
+      });
+
+      const nodes = extractNodes(diagram);
 
       if (!nodes || nodes.length === 0) {
         throw new ActionError("Trebuie sa adaugi cel putin un nod.");
@@ -37,6 +54,7 @@ export const createNodes = authActionAdmin
       });
 
       revalidateTag("nodes");
-      return { success: true };
+      revalidateTag("mermaidDiagrams");
+      return { success: true, name: "Layer 1" };
     }
   );

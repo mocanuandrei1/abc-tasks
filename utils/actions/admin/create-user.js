@@ -1,9 +1,7 @@
 "use server";
 
 import { hash } from "bcryptjs";
-
 import { userSchema } from "@/utils/zod";
-
 import prisma from "@/utils/prisma";
 import { authActionAdmin } from "@/utils/safe-action";
 import { revalidateTag } from "next/cache";
@@ -22,10 +20,12 @@ export const createUser = authActionAdmin
       parsedInput: { name, username, password, isAdmin, nodes },
       ctx: { userId, isAdmin: isUserAdmin },
     }) => {
+      // Check if the current user is allowed to create an admin
       if (isAdmin && !isUserAdmin) {
         throw new ActionError("You can't create an admin user.");
       }
 
+      // Check if the username is already taken
       const existingUser = await prisma.user.findUnique({
         where: { username },
       });
@@ -34,8 +34,10 @@ export const createUser = authActionAdmin
         throw new ActionError("Username-ul este deja folosit.");
       }
 
+      // Hash the password
       const hashedPassword = await hash(password, 12);
 
+      // Create the user and connect to the existing nodes by their IDs
       await prisma.user.create({
         data: {
           name,
@@ -43,12 +45,14 @@ export const createUser = authActionAdmin
           password: hashedPassword,
           isAdmin,
           nodes: {
-            create: {},
+            connect: nodes.map((nodeId) => ({ id: nodeId })), // Connect existing nodes
           },
         },
       });
 
+      // Revalidate the users cache tag
       revalidateTag("users");
-      return { success: true, name: name };
+
+      return { success: true, name };
     }
   );

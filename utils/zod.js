@@ -30,3 +30,7 @@ export const multipleNodesSchema = z.object({
     })
   ),
 });
+
+export const mermaidSchema = z.object({
+  diagram: z.string().min(1, "Diagrama este obligatorie"), // Non-empty string
+});

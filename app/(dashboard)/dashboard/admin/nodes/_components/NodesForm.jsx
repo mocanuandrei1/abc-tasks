@@ -1,9 +1,8 @@
 "use client";
 import { createNodes } from "@/utils/actions/node/create-nodes";
-import { multipleNodesSchema } from "@/utils/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 import {
@@ -17,30 +16,29 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { extractNodes } from "@/utils/functions/nodes/extract-nodes";
 import { toast } from "@/hooks/use-toast";
-import { z } from "zod";
+import { MermaidDiagram } from "@lightenna/react-mermaid-diagram";
 
-const NodesSchema1 = z.object({
-  nodes: z.array(z.object({ name: z.string() })),
-});
-
-export const NodesForm = () => {
+export const NodesForm = ({ diagram }) => {
   const { reset, ...form } = useForm({
-    resolver: zodResolver(NodesSchema1),
+    resolver: zodResolver(MermaidDiagram),
     defaultValues: {
-      nodes: [{ id: "", name: "" }],
+      mermaidDiagram: diagram, // Setting the default value for the diagram field
     },
   });
 
+  useEffect(() => {
+    // Update the form values if the diagram prop changes
+    reset({ mermaidDiagram: diagram });
+  }, [diagram, reset]);
+
   const { execute, result, isExecuting } = useAction(createNodes, {
     onSuccess: ({ data }) => {
-      setIsOpen(false);
       reset();
       toast({
         variant: "default",
-        title: "Succes",
-        description: `Nodurile au fost create cu succes!`,
+        title: "Success",
+        description: `Diagrama ${data.name} a fost creată cu succes!`,
         duration: 3000,
       });
     },
@@ -53,6 +51,7 @@ export const NodesForm = () => {
       });
     },
   });
+
   return (
     <Form {...form}>
       <form
@@ -60,9 +59,7 @@ export const NodesForm = () => {
           e.preventDefault();
           const mermaidDiagram = form.getValues("mermaidDiagram");
 
-          const nodes = extractNodes(mermaidDiagram);
-
-          execute({ nodes });
+          execute({ diagram: mermaidDiagram });
         }}
         className="space-y-8"
       >
@@ -74,12 +71,13 @@ export const NodesForm = () => {
               <FormLabel>Mermaid Diagram</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Plaseaza diagrama mermaid aici"
+                  placeholder="Plasează diagrama Mermaid aici"
+                  className="h-[50vh] resize-none"
                   {...field}
                 />
               </FormControl>
               <FormDescription>
-                Diagrama mermaid este un limbaj de marcare pentru crearea de
+                Diagrama Mermaid este un limbaj de marcare pentru crearea de
                 diagrame.
                 <a
                   href="https://mermaid-js.github.io/mermaid/#/"
@@ -87,7 +85,7 @@ export const NodesForm = () => {
                   rel="noreferrer"
                   className="text-blue-500"
                 >
-                  Afla mai multe
+                  Află mai multe
                 </a>
               </FormDescription>
               <FormMessage />
@@ -95,10 +93,10 @@ export const NodesForm = () => {
           )}
         />
         {result.validationErrors ? (
-          <p>Nu cred ca ai folosit un format Mermaid potrivit.</p>
+          <p>{result.validationErrors.diagram._errors[0]}</p>
         ) : null}
         <Button type="submit">
-          {isExecuting ? "Se actualizeaza..." : "Actualizeaza"}
+          {isExecuting ? "Se actualizează..." : "Actualizează"}
         </Button>
       </form>
     </Form>

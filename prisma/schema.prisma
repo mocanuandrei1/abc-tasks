@@ -19,7 +19,12 @@ model User {
 }
 
 model Node {
-  id    Int     @id @d efault(autoincrement())
+  id    Int     @id @default(autoincrement())
   name  String
   users User[]  @relation("UserNodes")
+}
+
+model MermaidDiagram {
+  id       Int     @id @default(autoincrement())
+  diagram  String
 }

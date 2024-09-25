@@ -24,12 +24,14 @@ export const Navbar = async () => {
 
   return (
     <header className="sticky top-0 flex h-16 items-center shadow-lg justify-between px-4 md:px-6">
-      <Image
-        src="/abccontrol_logo_desktop.webp"
-        alt="Logo"
-        width={50}
-        height={50}
-      />
+      <Link href="/dashboard">
+        <Image
+          src="/abccontrol_logo_desktop.webp"
+          alt="Logo"
+          width={50}
+          height={50}
+        />
+      </Link>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="secondary" size="icon" className="rounded-full">
