@@ -16,6 +16,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -28,8 +35,11 @@ import { DisplayServerActionResponse } from "@/components/custom ui/display-serv
 import { useState } from "react";
 import { createUser } from "@/utils/actions/admin/create-user";
 import { toast } from "@/hooks/use-toast";
+import { PlusCircle } from "lucide-react";
 
-const AddUser = () => {
+import { Checkbox } from "@/components/ui/checkbox";
+
+const AddUser = ({ nodes }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const { reset, ...form } = useForm({
@@ -67,7 +77,12 @@ const AddUser = () => {
   return (
     <Form {...form}>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger>Adauga utilizator</DialogTrigger>
+        <DialogTrigger className="flex items-center gap-2 bg-primary p-2 text-primary-foreground rounded-lg hover:bg-primary/80">
+          <PlusCircle className="h-3.5 w-3.5" />
+          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+            Adauga utilizator
+          </span>
+        </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Creeaza un utilizator</DialogTitle>
@@ -81,7 +96,9 @@ const AddUser = () => {
               const name = form.getValues("name");
               const username = form.getValues("username");
               const password = form.getValues("password");
-              execute({ name, username, password });
+              const isAdmin = form.getValues("isAdmin");
+              const nodes = form.getValues("nodeIds");
+              execute({ name, username, password, isAdmin, nodes });
             }}
             className="space-y-8"
           >
@@ -124,8 +141,8 @@ const AddUser = () => {
                 <FormItem>
                   <FormLabel>Este admin?</FormLabel>
                   <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
+                    onValueChange={(value) => field.onChange(value === "true")}
+                    value={String(field.value)}
                     name={field.name}
                   >
                     <FormControl>
@@ -134,13 +151,69 @@ const AddUser = () => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="yes">Da</SelectItem>
-                      <SelectItem value="no">No</SelectItem>
+                      <SelectItem value="true">Da</SelectItem>
+                      <SelectItem value="false">Nu</SelectItem>
                     </SelectContent>
                   </Select>
                 </FormItem>
               )}
             />
+            {result.validationErrors?.isAdmin && (
+              <p>{result.validationErrors?.isAdmin._errors[0]}</p>
+            )}
+
+            <FormField
+              control={form.control}
+              name="nodeIds" // Assuming this field holds the selected node IDs
+              render={() => (
+                <FormItem className="">
+                  <div className="mb-4">
+                    <FormLabel className="text-base">Select Nodes</FormLabel>
+                  </div>
+                  {nodes.map((node, idx) => (
+                    <FormField
+                      key={node.id}
+                      control={form.control}
+                      name="nodeIds"
+                      render={({ field }) => {
+                        // Ensure field.value is initialized as an array
+                        const selectedNodes = field.value || [];
+
+                        return (
+                          <FormItem
+                            key={node.id}
+                            className="flex flex-row items-start space-x-3 space-y-0"
+                          >
+                            <FormControl>
+                              <Checkbox
+                                checked={selectedNodes.includes(node.id)}
+                                onCheckedChange={(checked) => {
+                                  return checked
+                                    ? field.onChange([
+                                        ...selectedNodes,
+                                        node.id,
+                                      ])
+                                    : field.onChange(
+                                        selectedNodes.filter(
+                                          (nodeId) => nodeId !== node.id
+                                        )
+                                      );
+                                }}
+                              />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              {node.name}
+                            </FormLabel>
+                          </FormItem>
+                        );
+                      }}
+                    />
+                  ))}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="password"

@@ -19,7 +19,7 @@ model User {
 }
 
 model Node {
-  id    Int     @id @default(autoincrement())
+  id    Int     @id @d efault(autoincrement())
   name  String
   users User[]  @relation("UserNodes")
 }
