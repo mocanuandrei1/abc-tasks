@@ -1,4 +1,4 @@
-import { compare } from "bcryptjs";
+import { compare, hash } from "bcryptjs";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import prisma from "./utils/prisma";
@@ -20,7 +20,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const user = await prisma.user.findUnique({
           where: { username },
-          select: { id: true, username: true, name: true, password: true },
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            password: true,
+            isAdmin: true,
+          },
         });
 
         if (!user) throw new Error("Utilizatorul sau parola sunt gresite");
@@ -33,6 +39,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           username: user.username,
           name: user.name,
           id: user.id,
+          isAdmin: user.isAdmin,
         };
 
         return userData;
@@ -46,7 +53,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async session({ session, token }) {
       if (token) {
         session.user.id = token.id;
+        session.user.username = token.username;
         session.user.name = token.name;
+        session.user.isAdmin = token.isAdmin;
       }
 
       return session;
@@ -54,7 +63,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.username = user.username;
         token.name = user.name;
+        token.isAdmin = user.isAdmin;
       }
       return token;
     },

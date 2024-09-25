@@ -1,5 +1,6 @@
 import localFont from "next/font/local";
 import "./globals.css";
+import { Toaster } from "@/components/ui/toaster";
 
 const poppinsRegular = localFont({
   src: "./fonts/Poppins-Regular.woff",
@@ -24,6 +25,7 @@ export default function RootLayout({ children }) {
         className={`${poppinsRegular.variable} ${poppinsBold.variable} antialiased`}
       >
         {children}
+        <Toaster />
       </body>
     </html>
   );

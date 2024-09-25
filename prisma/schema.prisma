@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client-js"
+}
+ 
+datasource db {
+  provider = "postgresql"
+  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  username  String   @unique
+  password  String
+  isAdmin   Boolean  @default(false) // Default to false for regular users
+  createdAt DateTime @default(now())
+  nodes     Node[]   @relation("UserNodes")
+}
+
+model Node {
+  id    Int     @id @default(autoincrement())
+  name  String
+  users User[]  @relation("UserNodes")
+}

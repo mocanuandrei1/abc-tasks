@@ -85,3 +85,13 @@ h6 {
     @apply bg-background text-foreground;
   }
 }
+
+.react-transform-component {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.react-transform-wrapper {
+  width: 100% !important;
+  height: 100% !important;
+}
