@@ -52,3 +52,27 @@ export const authActionClient = actionClient
 
     return next({ ctx: { userId } });
   });
+
+export const authActionAdmin = actionClient
+  // Define authorization middleware.
+  .use(async ({ next }) => {
+    const session = await getSession();
+
+    if (!session) {
+      throw new Error("Session not found!");
+    }
+
+    const userId = session.user.id;
+
+    if (!userId) {
+      throw new Error("Session is not valid!");
+    }
+
+    const isAdmin = session.user.isAdmin;
+
+    if (!isAdmin) {
+      throw new Error("Only admins can do this action.");
+    }
+
+    return next({ ctx: { userId, isAdmin } });
+  });
