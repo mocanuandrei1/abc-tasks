@@ -16,8 +16,6 @@ import Link from "next/link";
 export const Navbar = async () => {
   const session = await getSession();
 
-  console.log(session);
-
   if (!session) {
     return null;
   }

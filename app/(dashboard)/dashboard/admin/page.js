@@ -1,8 +1,15 @@
 import { Button } from "@/components/ui/button";
+import { getSession } from "@/utils/get-session";
 import Link from "next/link";
 import React from "react";
 
-const page = () => {
+const page = async () => {
+  const session = await getSession();
+
+  if (!session) {
+    return <div>Nu esti authentificat</div>;
+  }
+
   return (
     <div className="flex flex-col justify-center h-[90vh] gap-4 items-center">
       <h1>Admin</h1>
