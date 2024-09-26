@@ -9,10 +9,6 @@ export default async function Page() {
     return <div>Nu esti authentificat</div>;
   }
 
-  if (!session.user.isAdmin) {
-    return <div>Nu ai permisiuni.</div>;
-  }
-
   const user = await getUser(parseInt(session.user.id));
 
   return <UserSettings user={user} />;

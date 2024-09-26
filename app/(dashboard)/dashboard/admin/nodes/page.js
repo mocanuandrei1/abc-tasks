@@ -20,6 +20,10 @@ const page = async () => {
     return <div>Nu esti authentificat</div>;
   }
 
+  if (!session.user.isAdmin) {
+    return <div>Nu ai permisiuni.</div>;
+  }
+
   return (
     <div className="flex flex-col justify-center h-[90vh] gap-4 items-center">
       <h1>Diagrama</h1>

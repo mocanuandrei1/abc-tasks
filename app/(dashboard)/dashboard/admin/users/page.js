@@ -21,6 +21,10 @@ export default async function Page() {
     return <div>Nu esti authentificat</div>;
   }
 
+  if (!session.user.isAdmin) {
+    return <div>Nu ai permisiuni.</div>;
+  }
+
   return (
     <div className="flex h-[90vh] w-full flex-col items-center justify-center bg-muted/40">
       <div className="flex flex-col w-2/3 sm:gap-4 sm:py-4">
