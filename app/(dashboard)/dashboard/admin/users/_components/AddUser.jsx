@@ -28,7 +28,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
-import { userSchema } from "@/utils/zod";
+import { createUserSchema } from "@/utils/zod";
 import { useAction } from "next-safe-action/hooks";
 
 import { DisplayServerActionResponse } from "@/components/custom ui/display-server-actions-response";
@@ -44,8 +44,9 @@ const AddUser = ({ nodes }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const { reset, ...form } = useForm({
-    resolver: zodResolver(userSchema),
+    resolver: zodResolver(createUserSchema),
     defaultValues: {
+      id: "",
       name: "",
       username: "",
       password: "",
@@ -99,6 +100,7 @@ const AddUser = ({ nodes }) => {
               const password = form.getValues("password");
               const isAdmin = form.getValues("isAdmin");
               const nodes = form.getValues("nodeIds");
+
               execute({ name, username, password, isAdmin, nodes });
             }}
             className="space-y-8"

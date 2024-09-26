@@ -28,7 +28,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
-import { userSchema } from "@/utils/zod";
+import { updateUserSchema } from "@/utils/zod";
 import { useAction } from "next-safe-action/hooks";
 
 import { DisplayServerActionResponse } from "@/components/custom ui/display-server-actions-response";
@@ -40,7 +40,7 @@ import { useEffect } from "react";
 
 const EditUser = ({ user, nodes, isOpen, setIsOpen }) => {
   const { reset, ...form } = useForm({
-    resolver: zodResolver(userSchema),
+    resolver: zodResolver(updateUserSchema),
     defaultValues: {
       name: "",
       username: "",

@@ -1,7 +1,7 @@
 "use server";
 
 import { hash } from "bcryptjs";
-import { userSchema } from "@/utils/zod";
+import { createUserSchema } from "@/utils/zod";
 import prisma from "@/utils/prisma";
 import { authActionAdmin } from "@/utils/safe-action";
 import { revalidateTag } from "next/cache";
@@ -14,7 +14,7 @@ export const createUser = authActionAdmin
     return next();
   })
   .metadata({ actionName: "createUser" })
-  .schema(userSchema)
+  .schema(createUserSchema)
   .action(
     async ({
       parsedInput: { name, username, password, isAdmin, nodes },
