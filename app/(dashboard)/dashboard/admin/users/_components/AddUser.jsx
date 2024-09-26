@@ -228,7 +228,7 @@ const AddUser = ({ nodes }) => {
                                   />
                                 </FormControl>
                                 <FormLabel className="font-normal">
-                                  {node.name}
+                                  {`${node.id} | ${node.name}`}
                                 </FormLabel>
                               </FormItem>
                             );

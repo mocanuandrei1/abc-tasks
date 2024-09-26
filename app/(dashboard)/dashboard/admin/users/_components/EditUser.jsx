@@ -226,7 +226,7 @@ const EditUser = ({ user, nodes, isOpen, setIsOpen }) => {
                             />
                           </FormControl>
                           <FormLabel className="font-normal">
-                            {node.name}
+                            {`${node.id} | ${node.name}`}
                           </FormLabel>
                         </FormItem>
                       ))}
