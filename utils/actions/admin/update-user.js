@@ -49,6 +49,8 @@ export const updateUser = authActionAdmin
       let hashedPassword = existingUser.password;
       if (password) {
         hashedPassword = await hash(password, 12);
+      } else {
+        hashedPassword = existingUser.password;
       }
 
       // Update the user

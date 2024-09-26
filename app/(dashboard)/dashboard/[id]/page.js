@@ -11,7 +11,7 @@ export default async function page({ params }) {
 
   const user = await getUser(parseInt(session.user.id));
 
-  if (!user.isAdmin && user.id !== parseInt(id)) {
+  if (!user.isAdmin && !user.nodes.some((node) => node.id === parseInt(id))) {
     return <div>Nu ai permisiuni pentru a accesa aceasta pagina</div>;
   }
 
