@@ -32,6 +32,6 @@ export const getUser = unstable_cache(
 
     return user;
   },
-  ["user"],
-  { tags: ["user"] }
+  ["users"],
+  { tags: ["users"] }
 );

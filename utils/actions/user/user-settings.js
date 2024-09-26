@@ -66,7 +66,7 @@ export const userSettings = authActionClient
         },
       });
 
-      revalidateTag("user");
+      revalidateTag("users");
       return { success: true, user: updatedUser };
     }
   );
