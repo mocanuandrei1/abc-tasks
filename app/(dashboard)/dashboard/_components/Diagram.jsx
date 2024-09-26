@@ -52,9 +52,8 @@ const getStyledDiagram = (diagram, user) => {
   return styledDiagram + "\n" + clickEvents;
 };
 
-export const Diagram = ({ diagram, session }) => {
+export const Diagram = ({ diagram, user }) => {
   const router = useRouter();
-  const user = session?.user;
 
   useEffect(() => {
     // Definim funcția callback globală

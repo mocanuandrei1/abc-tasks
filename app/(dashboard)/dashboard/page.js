@@ -1,6 +1,7 @@
 import { getSession } from "@/utils/get-session";
 import { Diagram } from "./_components/Diagram";
 import { getMermaidDiagram } from "@/utils/functions/mermaidDiagrams/get-mermaid-diagram";
+import { getUser } from "@/utils/functions/users/get-user";
 
 export default async function Page() {
   const sessionData = getSession();
@@ -15,5 +16,11 @@ export default async function Page() {
     return <div>Nu esti authentificat</div>;
   }
 
-  return <Diagram session={session} diagram={mermaidDiagram.diagram} />;
+  if (!mermaidDiagram) {
+    return <div>Diagrama nu a fost gasita</div>;
+  }
+
+  const user = await getUser(parseInt(session.user.id));
+
+  return <Diagram user={user} diagram={mermaidDiagram.diagram} />;
 }
