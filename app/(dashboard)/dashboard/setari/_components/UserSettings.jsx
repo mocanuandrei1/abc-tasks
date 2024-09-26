@@ -1,13 +1,5 @@
 "use client";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from "@/components/ui/dialog";
+
 import {
   Form,
   FormControl,
@@ -38,12 +30,15 @@ const UserSettings = ({ user }) => {
 
   const { execute, result, isExecuting } = useAction(userSettings, {
     onSuccess: ({ data }) => {
-      setIsOpen(false);
-      reset();
+      reset({
+        name: data.user.name,
+        username: data.user.username,
+        password: "", // Reset the password field
+      });
       toast({
         variant: "default",
         title: "Succes",
-        description: `Utilizatorul ${data.name} a fost editat cu succes!`,
+        description: `Utilizatorul ${data.user.name} a fost editat cu succes!`,
         duration: 3000,
       });
     },
@@ -66,6 +61,7 @@ const UserSettings = ({ user }) => {
             const name = form.getValues("name");
             const username = form.getValues("username");
             const password = form.getValues("password");
+
             execute({ name, username, password, id: parseInt(user.id) });
           }}
           className="max-w-md w-full space-y-6"

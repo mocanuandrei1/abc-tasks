@@ -28,10 +28,72 @@ export const createNodes = authActionAdmin
         throw new ActionError("Trebuie sa adaugi un diagrama.");
       }
 
-      // Delete the existing Mermaid diagram.
+      // Extract nodes from the diagram
+      const newNodes = extractNodes(diagram);
+
+      if (!newNodes || newNodes.length === 0) {
+        throw new ActionError("Trebuie sa adaugi cel putin un nod.");
+      }
+
+      // Fetch existing nodes from the database
+      const existingNodes = await prisma.node.findMany();
+
+      // Convert both existing and new nodes to a map for easier comparison by id or name
+      const newNodeMap = new Map(newNodes.map((node) => [node.id, node]));
+      const existingNodeMap = new Map(
+        existingNodes.map((node) => [node.id, node])
+      );
+
+      // Determine which nodes to delete
+      const nodesToDelete = existingNodes.filter(
+        (existingNode) => !newNodeMap.has(existingNode.id)
+      );
+
+      // Determine which nodes to update (if necessary)
+      const nodesToUpdate = existingNodes.filter((existingNode) =>
+        newNodeMap.has(existingNode.id)
+      );
+
+      // Determine which nodes to insert
+      const nodesToInsert = newNodes.filter(
+        (newNode) => !existingNodeMap.has(newNode.id)
+      );
+
+      // Perform database operations:
+      // Delete nodes that are no longer present
+      if (nodesToDelete.length > 0) {
+        const idsToDelete = nodesToDelete.map((node) => node.id);
+        await prisma.node.deleteMany({
+          where: { id: { in: idsToDelete } },
+        });
+      }
+
+      // Update existing nodes if necessary
+      for (const nodeToUpdate of nodesToUpdate) {
+        const newNode = newNodeMap.get(nodeToUpdate.id);
+        if (
+          newNode &&
+          (newNode.name !== nodeToUpdate.name ||
+            newNode.someOtherField !== nodeToUpdate.someOtherField)
+        ) {
+          await prisma.node.update({
+            where: { id: nodeToUpdate.id },
+            data: newNode,
+          });
+        }
+      }
+
+      // Insert new nodes
+      if (nodesToInsert.length > 0) {
+        await prisma.node.createMany({
+          data: nodesToInsert,
+        });
+      }
+
+      // Delete the existing Mermaid diagram
       await prisma.mermaidDiagram.deleteMany();
 
-      // Create the new Mermaid diagram.
+      // Create the new Mermaid diagram
       await prisma.mermaidDiagram.create({
         data: {
           id: 1,
@@ -39,22 +101,11 @@ export const createNodes = authActionAdmin
         },
       });
 
-      const nodes = extractNodes(diagram);
-
-      if (!nodes || nodes.length === 0) {
-        throw new ActionError("Trebuie sa adaugi cel putin un nod.");
-      }
-
-      // Delete the existing nodes.
-      await prisma.node.deleteMany();
-
-      // Create the new nodes.
-      await prisma.node.createMany({
-        data: nodes,
-      });
-
+      // Revalidate tags
       revalidateTag("nodes");
       revalidateTag("mermaidDiagrams");
+      revalidateTag("users");
+
       return { success: true, name: "Layer 1" };
     }
   );

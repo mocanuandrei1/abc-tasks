@@ -6,18 +6,18 @@ import prisma from "@/utils/prisma";
 import { authActionAdmin } from "@/utils/safe-action";
 import { revalidateTag } from "next/cache";
 
-export const createUser = authActionAdmin
+export const updateUser = authActionAdmin
   .use(async ({ next, ctx }) => {
     if (!ctx.isAdmin) {
-      throw new ActionError("Only admins can do this action.");
+      throw new ActionError("Doar adminii pot face aceasta actiune.");
     }
     return next();
   })
-  .metadata({ actionName: "createUser" })
+  .metadata({ actionName: "updateUser" })
   .schema(userSchema)
   .action(
     async ({
-      parsedInput: { name, username, password, isAdmin, nodes },
+      parsedInput: { id, name, username, password, isAdmin, nodes },
       ctx: { userId, isAdmin: isUserAdmin },
     }) => {
       // Check if the current user is allowed to create an admin
@@ -25,27 +25,42 @@ export const createUser = authActionAdmin
         throw new Error("You can't create an admin user.");
       }
 
-      // Check if the username is already taken
+      console.log("id", id);
+
+      // Check if the user exists
       const existingUser = await prisma.user.findUnique({
+        where: { id },
+      });
+
+      if (!existingUser) {
+        throw new Error("Utilizatorul nu exista.");
+      }
+
+      // Check if the username is already taken
+      const existingUsername = await prisma.user.findUnique({
         where: { username },
       });
 
-      if (existingUser) {
+      if (existingUsername && existingUsername.id !== id) {
         throw new Error("Username-ul este deja folosit.");
       }
 
       // Hash the password
-      const hashedPassword = await hash(password, 12);
+      let hashedPassword = existingUser.password;
+      if (password) {
+        hashedPassword = await hash(password, 12);
+      }
 
-      // Create the user and connect to the existing nodes by their IDs
-      await prisma.user.create({
+      // Update the user
+      await prisma.user.update({
+        where: { id },
         data: {
           name,
           username,
           password: hashedPassword,
           isAdmin,
           nodes: {
-            connect: nodes.map((nodeId) => ({ id: nodeId })), // Connect existing nodes
+            set: nodes.map((nodeId) => ({ id: nodeId })), // Connect existing nodes
           },
         },
       });

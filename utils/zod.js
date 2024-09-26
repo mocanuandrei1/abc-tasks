@@ -10,6 +10,7 @@ export const loginSchema = z.object({
 });
 
 export const userSchema = z.object({
+  id: z.number(),
   name: z.string().min(1, "Numele este obligatoriu"), // Non-empty string
   username: z.string().min(1, "Username-ul este obligatoriu"), // Non-empty string
   password: z.string().min(8, "Parola trebuie sa aiba minim 8 caractere"), // Minimum 8 characters for password
@@ -39,4 +40,5 @@ export const userSettingsSchema = z.object({
   name: z.string().min(1, "Numele este obligatoriu"), // Non-empty string
   username: z.string().min(1, "Username-ul este obligatoriu"), // Non-empty string
   password: z.string().min(8, "Parola trebuie sa aiba minim 8 caractere"), // Minimum 8 characters for password
+  id: z.number().int().positive(), // Integer and must be positive
 });

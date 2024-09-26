@@ -21,9 +21,12 @@ export const userSettings = authActionClient
       parsedInput: { name, username, password, id },
       ctx: { userId },
     }) => {
+      console.log("id", id);
+      console.log("userId", userId);
+
       // Check if the user id is the same as the one in the context.
-      if (userId !== id) {
-        throw new ActionError("Poti sa editezi doar propriul cont.");
+      if (parseInt(userId) !== id) {
+        throw new Error("Poti sa editezi doar propriul cont.");
       }
 
       // Check if the user exists.
@@ -32,7 +35,7 @@ export const userSettings = authActionClient
       });
 
       if (!user) {
-        throw new ActionError("Utilizatorul nu exista.");
+        throw new Error("Utilizatorul nu exista.");
       }
 
       // Check if the username is unique.
@@ -41,7 +44,7 @@ export const userSettings = authActionClient
       });
 
       if (existingUser && existingUser.id !== id) {
-        throw new ActionError("Username-ul este deja folosit.");
+        throw new Error("Username-ul este deja folosit.");
       }
 
       // Hash the password if it's provided.
@@ -51,7 +54,7 @@ export const userSettings = authActionClient
       }
 
       // Update the user.
-      await prisma.user.update({
+      const updatedUser = await prisma.user.update({
         where: { id },
         data: {
           name,
@@ -63,7 +66,7 @@ export const userSettings = authActionClient
         },
       });
 
-      revalidateTag("users");
-      return { success: true, name: name };
+      revalidateTag("user");
+      return { success: true, user: updatedUser };
     }
   );

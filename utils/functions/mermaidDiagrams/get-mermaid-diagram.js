@@ -6,8 +6,8 @@ export const preload = (id) => {
 };
 
 export const getMermaidDiagram = unstable_cache(
-  (id) => {
-    const diagram = prisma.mermaidDiagram.findUnique({
+  async (id) => {
+    const diagram = await prisma.mermaidDiagram.findUnique({
       where: {
         id,
       },

@@ -6,8 +6,8 @@ export const preload = () => {
 };
 
 export const getAllNodes = unstable_cache(
-  () => {
-    const nodes = prisma.node.findMany({
+  async () => {
+    const nodes = await prisma.node.findMany({
       select: {
         id: true,
         name: true,
