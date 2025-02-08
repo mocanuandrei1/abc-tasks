@@ -105,3 +105,38 @@ h6 {
 .edgeLabel p {
   background-color: white !important;
 }
+
+/* Suprascrie stilurile Mermaid.js pentru secțiuni */
+rect.section.section0 {
+  fill: #477dc8 !important; /* Roz pal */
+}
+
+rect.section.section1 {
+  fill: #edef61 !important; /* Verde pal */
+}
+
+rect.section.section2 {
+  fill: #bb59ec !important; /* Albastru pal */
+}
+rect.section.section3 {
+  fill: #f7a35c !important; /* Galben pal */
+}
+/* Setează toate casetele la aceeași dimensiune */
+rect.task {
+  width: 140px !important; /* Lățime fixă */
+  height: 60px !important; /* Înălțime fixă */
+}
+text.taskText {
+  fill: black !important; /* Culoare text */
+  font-weight: bold !important; /* Grosime text */
+  font-size: small !important; /* Dimensiune text */
+}
+text.sectionTitle {
+  fill: black !important; /* Culoare text */
+  font-weight: bold !important; /* Grosime text */
+  font-size: large !important; /* Dimensiune text */
+}
+rect.task {
+  pointer-events: all; /* 📌 Permite evenimente pe elementele SVG */
+  cursor: pointer; /* 🔥 Arată cursor de mână când dai hover */
+}

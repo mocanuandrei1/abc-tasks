@@ -20,6 +20,8 @@ export default async function Page() {
     return <div>Diagrama nu a fost gasita</div>;
   }
 
+  console.log(mermaidDiagram);
+
   const user = await getUser(parseInt(session.user.id));
 
   return <Diagram user={user} diagram={mermaidDiagram.diagram} />;

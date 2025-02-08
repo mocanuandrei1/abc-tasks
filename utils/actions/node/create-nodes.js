@@ -9,7 +9,7 @@ import { revalidateTag } from "next/cache";
 export const createNodes = authActionAdmin
   .use(async ({ next, ctx }) => {
     if (!ctx.isAdmin) {
-      throw new ActionError("Only admins can do this action.");
+      throw new Error("Only admins can do this action.");
     }
     return next();
   })
@@ -21,19 +21,19 @@ export const createNodes = authActionAdmin
       ctx: { userId, isAdmin: isUserAdmin },
     }) => {
       if (!isUserAdmin) {
-        throw new ActionError("Nu poti adauga noduri.");
+        throw new Error("Nu poti adauga noduri.");
       }
 
       if (!diagram) {
-        throw new ActionError("Trebuie sa adaugi un diagrama.");
+        throw new Error("Trebuie sa adaugi un diagrama.");
       }
 
       // Extract nodes from the diagram
       const newNodes = extractNodes(diagram);
 
-      if (!newNodes || newNodes.length === 0) {
-        throw new ActionError("Trebuie sa adaugi cel putin un nod.");
-      }
+      // if (!newNodes || newNodes.length === 0) {
+      //   throw new Error("Trebuie sa adaugi cel putin un nod.");
+      // }
 
       // Fetch existing nodes from the database
       const existingNodes = await prisma.node.findMany();
